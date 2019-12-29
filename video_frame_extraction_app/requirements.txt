@@ -1,0 +1,6 @@
+flask
+redis
+opencv-python
+pyzmq
+vidgear
+json-tricks

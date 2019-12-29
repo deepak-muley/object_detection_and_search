@@ -1,0 +1,45 @@
+version: '3.3'
+services:
+    rtsp_server_live555:
+        image: rtsp_server_live555:latest
+    video_frame_extraction_app:
+        build:
+            context: ./video_frame_extraction_app
+        image: video_frame_extraction_app:latest
+        environment:
+            - REDIS_HOST=redis
+        ports:
+            - "5000:5000"
+        depends_on: 
+            - redis
+            - rtsp_server_live555
+        devices:
+            - ${WEBCAM_DEVICE}:${WEBCAM_DEVICE}
+        privileged: true
+    object_dectection_app:
+        build:
+            context: ./object_detection_app
+        image: object_detection_app:latest
+        environment:
+            - REDIS_HOST=redis
+            - ES_HOST=elasticsearch
+            # - DISPLAY=${X11_HOST_IP}:0
+        volumes:
+            - ./data:/data
+            # - /tmp/.X11-unix:/tmp/.X11-unix
+        ports:
+            - "7000:7000"
+        depends_on:
+            - redis
+            # - elasticsearch 
+            - video_frame_extraction_app    
+    redis:
+        image: redis
+        volumes:
+            - redis_data:/data        
+    # elasticsearch:
+    #     image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
+    #     ports:
+    #         - 9200:9200
+volumes:
+    redis_data:
