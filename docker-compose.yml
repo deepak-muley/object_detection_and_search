@@ -16,13 +16,13 @@ services:
         devices:
             - ${WEBCAM_DEVICE}:${WEBCAM_DEVICE}
         privileged: true
+        restart: always
     object_dectection_app:
         build:
             context: ./object_detection_app
         image: object_detection_app:latest
         environment:
             - REDIS_HOST=redis
-            - ES_HOST=elasticsearch
             # - DISPLAY=${X11_HOST_IP}:0
         volumes:
             - ./data:/data
@@ -31,8 +31,21 @@ services:
             - "7000:7000"
         depends_on:
             - redis
-            - elasticsearch 
-            - video_frame_extraction_app    
+            - video_frame_extraction_app  
+        restart: always  
+    feature_indexer_app:
+        build:
+            context: ./feature_indexer_app
+        image: feature_indexer_app:latest
+        environment:
+            - REDIS_HOST=redis
+            - ES_HOST=elasticsearch
+        volumes:
+            - ./data:/data
+        depends_on:
+            - redis
+            - elasticsearch   
+        restart: always
     redis:
         image: redis
         volumes:
