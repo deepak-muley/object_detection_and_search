@@ -31,15 +31,24 @@ services:
             - "7000:7000"
         depends_on:
             - redis
-            # - elasticsearch 
+            - elasticsearch 
             - video_frame_extraction_app    
     redis:
         image: redis
         volumes:
             - redis_data:/data        
-    # elasticsearch:
-    #     image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
-    #     ports:
-    #         - 9200:9200
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:6.3.2
+        ports:
+            - 9200:9200
+        volumes:
+            - es_data:/data 
+    kibana:
+        image: docker.elastic.co/kibana/kibana:6.3.2
+        ports:
+            - "5601:5601"
+        depends_on:
+            - elasticsearch
 volumes:
     redis_data:
+    es_data:
