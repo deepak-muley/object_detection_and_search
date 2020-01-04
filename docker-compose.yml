@@ -48,20 +48,23 @@ services:
         restart: always
     redis:
         image: redis
-        volumes:
-            - redis_data:/data        
+        # volumes:
+        #     - redis_data:/data   
+        restart: always     
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:6.3.2
         ports:
             - 9200:9200
-        volumes:
-            - es_data:/data 
+        # volumes:
+        #     - es_data:/data 
+        restart: always
     kibana:
         image: docker.elastic.co/kibana/kibana:6.3.2
         ports:
             - "5601:5601"
         depends_on:
             - elasticsearch
-volumes:
-    redis_data:
-    es_data:
+        restart: always
+# volumes:
+#     redis_data:
+#     es_data:

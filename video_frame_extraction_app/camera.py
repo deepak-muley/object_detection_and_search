@@ -3,7 +3,7 @@ import cv2
 import os
 import os.path
 import numpy as np
-from vidgear.gears import VideoGear
+from vidgear.gears import VideoGear, CamGear
 
 os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;udp"
 
@@ -23,10 +23,25 @@ class Camera(object):
         if self.vcap:
             self.vcap.release()
 
-class VideoStream(object):
+class RTSPVideoStream(object):
     def __init__(self, rtspurl):
         self.rtspurl = rtspurl
         self.stream = VideoGear(source=self.rtspurl).start()
+
+    def stop(self):
+        if self.stream:
+            self.stream.stop()
+
+    def get_frame(self):
+        if not self.stream:
+            return None
+        frame = self.stream.read()
+        return frame
+
+class YoutTubeVideoStream(object):
+    def __init__(self, url):
+        self.url = url
+        self.stream = CamGear(source=self.url, y_tube =True).start()
 
     def stop(self):
         if self.stream:
